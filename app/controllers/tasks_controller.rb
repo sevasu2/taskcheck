@@ -1,13 +1,13 @@
 class TasksController < ApplicationController
+  before_action :set_task, only: [:show, :edit, :update, :destroy]
 
   # 一覧表示
   def index
-    @tasks = Task.all
+    @tasks = current_user.tasks
   end
 
   # 詳細画面
   def show
-    @task = Task.find(params[:id])
   end
 
   # 新規登録
@@ -27,19 +27,16 @@ class TasksController < ApplicationController
 
   # 編集画面
   def edit
-    @task = Task.find(params[:id])
   end
 
   # 更新
   def update
-    task = Task.find(params[:id])
     task.update!(task_params)
     redirect_to tasks_url, notice: "タスク「#{task.name}を更新しました。」"
   end
 
   # 削除
   def destroy
-    task = Task.find(params[:id])
     task.destroy
     redirect_to tasks_url, notice: "タスクを「#{task.name}」を削除しました。"
   end
@@ -50,5 +47,9 @@ class TasksController < ApplicationController
   # ストロングパラメーター
   def task_params
     params.require(:task).permit(:name, :description)
+  end
+
+  def set_task
+    @task = current_user.tasks.find(params[:id])
   end
 end
