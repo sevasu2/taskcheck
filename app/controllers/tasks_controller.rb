@@ -20,6 +20,7 @@ class TasksController < ApplicationController
   def create
     @task = Task.new(task_params)
     if @task.save
+      TaskMailer.creation_email(@task).deliver_now
       redirect_to @task, notice: "タスク「#{task.name}を登録しました。」"
     else
       render :new
@@ -52,7 +53,7 @@ class TasksController < ApplicationController
 
   # ストロングパラメーター
   def task_params
-    params.require(:task).permit(:name, :description)
+    params.require(:task).permit(:name, :description, :image)
   end
 
   def set_task
