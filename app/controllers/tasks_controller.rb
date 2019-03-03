@@ -3,7 +3,8 @@ class TasksController < ApplicationController
 
   # 一覧表示
   def index
-    @tasks = current_user.tasks
+    @q = current_user.tasks.ransack(params[:q])
+    @tasks = @q.result(distinct: true)
   end
 
   # 詳細画面
@@ -23,6 +24,11 @@ class TasksController < ApplicationController
     else
       render :new
     end
+  end
+
+  def confirm_new
+    @task = current_user.tasks.new(task_params)
+    render :new unless @task.valid?
   end
 
   # 編集画面
